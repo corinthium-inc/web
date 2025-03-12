@@ -27,6 +27,7 @@ body {
   font-size: 0.75em;
   box-sizing: border-box;
   padding: 2lh 4ch;
+  -webkit-tap-highlight-color: transparent;
 }
 
 h1 {
