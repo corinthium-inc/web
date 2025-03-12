@@ -254,7 +254,7 @@ function initialState() {
     bottomColumns: [],
     vy: 0,
     segmentYs: new Array(SEGMENT_TEXT.length).fill(Math.round(measureWindow().height / 2)),
-    gameOver: false,
+    gameOverAt: null,
   }
 }
 
@@ -362,10 +362,10 @@ function render() {
       const isColliding = (canvas[roundY][x] !== ' ' && roundY > top && roundY < bottom)
         || canvas[roundY][x] === '|'
       
-      if (!state.gameOver && isColliding) {
+      if (!state.gameOverAt && isColliding) {
         // Collision!
         console.log('Collision!', i, roundY, x, canvas[roundY][x])
-        state.gameOver = true
+        state.gameOverAt = Date.now()
         render()
         return
       }
@@ -374,7 +374,7 @@ function render() {
     }
   }
 
-  if (state.gameOver) {
+  if (state.gameOverAt) {
     const gameOver = stringToMatrix(`
                                          
                                          
@@ -403,7 +403,7 @@ function render() {
 const TENSION = 0.25 
 
 function tick() {
-  if (state.gameOver) return
+  if (state.gameOverAt) return
 
   for (const column of state.topColumns) column.x--
   for (const column of state.bottomColumns) column.x--
@@ -434,7 +434,8 @@ render()
 window.addEventListener('resize', render)
 
 function onActivate() {
-  if (state.gameOver) {
+  if (state.gameOverAt) {
+    if (Date.now() - state.gameOverAt < 1000) return
     Object.assign(state, initialState())
     render()
   } else {
