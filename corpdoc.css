@@ -15,7 +15,11 @@
 }
 
 body {
-  background: #c5c5c5;
+  background-color: #dddddd;
+  --grid-fg: #cbcbcb;
+  background-image: repeating-linear-gradient(var(--grid-fg) 0 1px, transparent 1px 100%),
+    repeating-linear-gradient(90deg, var(--grid-fg) 0 1px, transparent 1px 100%);
+  background-size: 1ch 1lh;
   margin: 0;
   font-family: 'Fira Mono', monospace;
   line-height: 1.25;
@@ -78,15 +82,15 @@ li::marker {
 }
 
 a {
-  color: #03499d;
+  color:#9d0331;
   text-decoration: none;
   outline: none;
-  
+  display: inline-block;
 }
 
 a:hover, a:focus-visible, a.active {
-  background: #03499d;
-  color: #c5c5c5;
+  background: #9d0331;
+  color: #dddddd;
 }
 
 ::selection {

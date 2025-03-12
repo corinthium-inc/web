@@ -18,6 +18,109 @@ function measureWindow() {
   return { width, height }
 }
 
+const numbers = [
+`
+   ,a8888a,       
+ ,8P"'  \`"Y8,     
+,8P        Y8,    
+88          88    
+88          88    
+\`8b        d8'    
+ \`8ba,  ,ad8'     
+   "Y8888P"       
+`,
+`
+         88       
+       ,d88       
+     888888       
+         88       
+         88       
+         88       
+         88       
+         88       
+`,
+`
+    ad888888b,    
+   d8"     "88    
+           a8P    
+        ,d8P"     
+      a8P"        
+    a8P'          
+   d8"            
+   88888888888    
+`,
+`
+    ad888888b,    
+   d8"     "88    
+           a8P    
+        aad8"     
+        ""Y8,     
+           "8b    
+   Y8,     a88    
+    "Y888888P'    
+`,
+`
+          ,d8     
+        ,d888     
+      ,d8" 88     
+    ,d8"   88     
+  ,d8"     88     
+  8888888888888   
+           88     
+           88     
+`,
+`
+   8888888888     
+   88             
+   88  ____       
+   88a8PPPP8b,    
+   PP"     \`8b    
+            d8    
+   Y8a     a8P    
+    "Y88888P"     
+`,
+`
+     ad8888ba,    
+    8P'    "Y8    
+   d8             
+   88,dd888bb,    
+   88P'    \`8b    
+   88       d8    
+   88a     a8P    
+    "Y88888P"     
+`,
+`
+   888888888888   
+           ,8P'   
+          d8"     
+        ,8P'      
+       d8"        
+     ,8P'         
+    d8"           
+   8P'            
+`,
+`
+    ad88888ba     
+   d8"     "8b    
+   Y8a     a8P    
+    "Y8aaa8P"     
+    ,d8"""8b,     
+   d8"     "8b    
+   Y8a     a8P    
+    "Y88888P"     
+`,
+`
+    ad88888ba     
+   d8"     "88    
+   8P       88    
+   Y8,    ,d88    
+    "PPPPPP"88    
+            8P    
+   8b,    a8P     
+   \`"Y8888P'      
+`
+].map(number => stringToMatrix(number.slice(1, -1)))
+
 const headerSpec = [
   [
     '|----',
@@ -222,6 +325,14 @@ ______________
   return column
 }
 
+function printNumber(number) {
+  return JSON.parse(JSON.stringify(number
+    .toString()
+    .split('')
+    .map(char => numbers[char.charCodeAt(0) - '0'.charCodeAt(0)])
+    .reduce((p, c) => stackHorizontal(p, c))))
+}
+
 const TOP_COLUMN_BASELINE_HEIGHT = topColumn(0, 0).length
 const BOTTOM_COLUMN_BASELINE_HEIGHT = bottomColumn(0, 0).length
 
@@ -238,12 +349,24 @@ function fill({ width, height }, char = ' ') {
   return canvas
 }
 
-function draw(buf, { x, y }, canvas) {
+function draw(buf, { x, y }, canvas, ignore = null) {
+  if (x === 'center') {
+    x = Math.round(canvas[0].length / 2) - Math.round(buf[0].length / 2)
+  }
+  if (y === 'center') {
+    y = Math.round(canvas.length / 2) - Math.round(buf.length / 2)
+  }
+
   for (let by = 0; by < buf.length; by++) {
     for (let bx = 0; bx < buf[by].length; bx++) {
+      if (ignore && buf[by][bx] === ignore) continue
       canvas[y + by][x + bx] = buf[by][bx]
     }
   }
+}
+
+function stackHorizontal(a, b) {
+  return a.map((line, i) => [ ...line, ...b[i] ])
 }
 
 const SEGMENT_TEXT = 'corinthium'
@@ -253,12 +376,27 @@ function initialState() {
     topColumns: [],
     bottomColumns: [],
     vy: 0,
+    score: 0,
     segmentYs: new Array(SEGMENT_TEXT.length).fill(Math.round(measureWindow().height / 2)),
     gameOverAt: null,
   }
 }
 
 const state = initialState()
+
+function getHighScore() {
+  let highScore
+  try {
+    highScore = JSON.parse(localStorage.getItem('high')) ?? 0
+  } catch {
+    highScore = 0
+  }
+  if (state.score > highScore) {
+    highScore = state.score
+    localStorage.setItem('high', JSON.stringify(highScore))
+  }
+  return highScore
+}
 
 function render() {
   const size = measureWindow()
@@ -375,25 +513,54 @@ function render() {
   }
 
   if (state.gameOverAt) {
-    const gameOver = stringToMatrix(`
+    const dialog = stringToMatrix(`
                                          
                                          
     ┌───────────────────────────────┐    
     │                               │    
     │           GAME OVER           │    
     │                               │    
+    │                               │    
+    │                               │    
+    │                               │    
     │   Press SPACE to play again   │    
     │                               │    
     └───────────────────────────────┘    
                                          
                                          
-    `.slice(1, -1))
-    draw(gameOver, {
-      x: Math.round(size.width / 2) - Math.round(gameOver[0].length / 2),
-      y: Math.round(size.height / 2) - Math.round(gameOver.length / 2)
-    }, canvas)
+`.slice(1, -1))
+    draw(stringToMatrix(`Score: ${state.score}`), { x: 'center', y: 6 }, dialog)
+    draw(stringToMatrix(`High Score: ${getHighScore()}`), { x: 'center', y: 7 }, dialog)
+    draw(dialog, { x: 'center', y: 'center' }, canvas)
+  } else {
+    const newCanvas = fill(size)
+    
+    if (size.width > 100) {
+      const score = printNumber(state.score)
+      
+      for (let i = 0; i < 2; i++) score.push(new Array(score[0].length).fill(' '))
+      const high = stringToMatrix(`High Score: ${getHighScore()}`)
+      draw(high, {
+        x: score[0].length - high[0].length - 4 ,
+        y: score.length - 1
+      }, score)
+      
+      draw(score, {
+        x: size.width - score[0].length - 10,
+        y: 'center',
+      }, newCanvas)
+    } else {
+      const score = stringToMatrix(`${state.score} (${getHighScore()})`)
+      draw(score, {
+        x: size.width - score[0].length - 4,
+        y: 'center',
+      }, newCanvas)
+    }
+    
+    draw(canvas, { x: 0, y: 0 }, newCanvas, ' ')
+    draw(newCanvas, { x: 0, y: 0 }, canvas)
   }
-
+  
   container.style.width = `${size.width}ch`
   container.style.height = `${size.height}lh`
   // container.style.userSelect = state.gameOver ? '' : 'none'
@@ -402,8 +569,9 @@ function render() {
 
 const TENSION = 0.25 
 
-function tick() {
+function tick() {  
   if (state.gameOverAt) return
+  state.score++
 
   for (const column of state.topColumns) column.x--
   for (const column of state.bottomColumns) column.x--
@@ -435,7 +603,7 @@ window.addEventListener('resize', render)
 
 function onActivate() {
   if (state.gameOverAt) {
-    if (Date.now() - state.gameOverAt < 1000) return
+    if (Date.now() - state.gameOverAt < 600) return
     Object.assign(state, initialState())
     render()
   } else {
