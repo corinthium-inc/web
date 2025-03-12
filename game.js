@@ -281,7 +281,7 @@ function render() {
     while (true) {
       const distance = randRange(25, 50)
 
-      const lastColumnX = state.topColumns.at(-1)?.x ?? (size.width - 100)
+      const lastColumnX = state.topColumns.at(-1)?.x ?? (size.width - (size.width < 100 ? 60 : 100))
       if (lastColumnX + COLUMN_WIDTH + distance > size.width) break
 
       const gap = randRange(10, 20)
