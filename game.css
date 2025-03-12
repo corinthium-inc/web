@@ -1,0 +1,125 @@
+@font-face {
+  font-family: 'Fira Mono';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/FiraMono-Regular.woff2') format('woff2');
+}
+
+body {
+  background: #000000;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Fira Mono', monospace;
+  line-height: 1.25;
+  letter-spacing: 0;
+  font-size: 0.75rem;
+}
+
+#container {
+  position: relative;
+}
+
+#game {
+  display: block;
+  margin: 0;
+  color: #ae9070;
+  text-shadow: 0 0 10px #ff9900;
+  font-family: inherit;
+  font-size: inherit;
+  user-select: none;
+}
+
+nav {
+  position: absolute;
+  bottom: 0.7lh;
+  left: 3ch;
+  display: flex;
+  gap: 1ch;
+}
+
+a {
+  color: #0095ff;
+  text-shadow: 0 0 10px #0095ff;
+  text-decoration: none;
+  outline: none;
+}
+
+a::before {
+  content: "\00a0";
+}
+
+a::after {
+  content: "\00a0";
+}
+
+a:hover::before, a:focus-visible::before {
+  content: "[";
+}
+
+a:hover::after, a:focus-visible::after {
+  content: "]";
+}
+
+body::after {
+  content: " ";
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  background: rgba(60, 55, 55, 0.15);
+  opacity: 0;
+  z-index: 2;
+  pointer-events: none;
+  animation: flicker 0.15s infinite;
+}
+
+body::before {
+  content: " ";
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  background: linear-gradient(to top, #00000000, #00000000 75%, #22222267, #4c4c4cc3);
+  background-size: cover;
+  background-size: 100% 3px;
+  pointer-events: none;
+  z-index: 1;
+}
+
+@keyframes flicker {
+  0% { opacity: 0.27861; }
+  5% { opacity: 0.34769; }
+  10% { opacity: 0.23604; }
+  15% { opacity: 0.90626; }
+  20% { opacity: 0.18128; }
+  25% { opacity: 0.83891; }
+  30% { opacity: 0.65583; }
+  35% { opacity: 0.67807; }
+  40% { opacity: 0.26559; }
+  45% { opacity: 0.84693; }
+  50% { opacity: 0.96019; }
+  55% { opacity: 0.08594; }
+  60% { opacity: 0.20313; }
+  65% { opacity: 0.71988; }
+  70% { opacity: 0.53455; }
+  75% { opacity: 0.37288; }
+  80% { opacity: 0.71428; }
+  85% { opacity: 0.70419; }
+  90% { opacity: 0.7003; }
+  95% { opacity: 0.36108; }
+  100% { opacity: 0.24387; }
+}
+
+@media only screen and (max-height: 800px) {
+  body {
+    font-size: 0.5em;
+  }
+}

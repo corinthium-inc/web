@@ -1,0 +1,95 @@
+@font-face {
+  font-family: 'Fira Mono';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/FiraMono-Regular.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Fira Mono';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('/fonts/FiraMono-Bold.woff2') format('woff2');
+}
+
+body {
+  background: #c5c5c5;
+  margin: 0;
+  font-family: 'Fira Mono', monospace;
+  line-height: 1.25;
+  letter-spacing: 0;
+  font-size: 0.75em;
+  box-sizing: border-box;
+  padding: 2lh 4ch;
+}
+
+h1 {
+  font-size: 1em;
+  margin: 0;
+  font-weight: 700;
+}
+
+h2 {
+  margin: 0;
+  font-size: 1em;
+  font-weight: 700;
+  margin-top: 2lh;
+}
+
+#back {
+  display: inline-block;
+  margin-bottom: 2lh;
+}
+
+.underline {
+  user-select: none;
+}
+
+p {
+  margin: 0;
+  margin-top: 1lh;
+}
+
+address {
+  margin-left: 2ch;
+  font-style: normal;
+}
+
+ul {
+  margin: 0;
+  padding: 0;
+}
+
+ul:not(li > ul) {
+  margin-top: 1lh;
+}
+
+li {
+  margin: 0;
+  padding: 0;
+  margin-left: 4ch;
+  list-style-type: none;
+}
+
+li::marker {
+  content: "* ";
+}
+
+a {
+  color: #03499d;
+  text-decoration: none;
+  outline: none;
+  
+}
+
+a:hover, a:focus-visible, a.active {
+  background: #03499d;
+  color: #c5c5c5;
+}
+
+::selection {
+  background: #5a5a5a;
+  color: #ffffff;
+}
