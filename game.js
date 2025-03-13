@@ -377,6 +377,7 @@ function initialState() {
     bottomColumns: [],
     vy: 0,
     score: 0,
+    startedCountingScore: false,
     segmentYs: new Array(SEGMENT_TEXT.length).fill(Math.round(measureWindow().height / 2)),
     gameOverAt: null,
   }
@@ -532,7 +533,7 @@ function render() {
     draw(stringToMatrix(`Score: ${state.score}`), { x: 'center', y: 6 }, dialog)
     draw(stringToMatrix(`High Score: ${getHighScore()}`), { x: 'center', y: 7 }, dialog)
     draw(dialog, { x: 'center', y: 'center' }, canvas)
-  } else {
+  } else if (state.startedCountingScore) {
     const newCanvas = fill(size)
     
     if (size.width > 100) {
@@ -571,7 +572,11 @@ const TENSION = 0.25
 
 function tick() {  
   if (state.gameOverAt) return
-  state.score++
+
+  if (!state.startedCountingScore && state.topColumns[0].x < 40)
+    state.startedCountingScore = true
+  
+  if (state.startedCountingScore) state.score++
 
   for (const column of state.topColumns) column.x--
   for (const column of state.bottomColumns) column.x--
